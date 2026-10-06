@@ -188,25 +188,30 @@ $$
 ---
 
 ### 2.2. Phương trình Bellman Tối ưu (Bellman Optimality Equation)
-Đặc tả hàm giá trị dưới chính sách tối ưu $\pi^*$, khi tác tử luôn chọn hành động mang lại lợi ích cao nhất:
+Đặc tả hàm giá trị dưới chính sách tối ưu $\pi^{\ast}$, khi tác tử luôn chọn hành động mang lại lợi ích cao nhất:
 
-#### a) Cho Optimal State-Value Function $v_*(s)$:
+#### a) Cho Optimal State-Value Function $v_{\ast}(s)$:
 
 $$
-v_*(s) = \max_{a \in \mathcal{A}} q_*(s, a)
+v_{\ast}(s) = \max_{a \in \mathcal{A}} q_{\ast}(s, a)
 $$
 
 Triển khai chi tiết:
 
 $$
-v_*(s) = \max_{a \in \mathcal{A}} \left( \mathcal{R}_s^a + \gamma \sum_{s' \in \mathcal{S}} \mathcal{P}_{ss'}^a v_*(s') \right)
+v_{\ast}(s) = \max_{a \in \mathcal{A}} \left( \mathcal{R}_s^a + \gamma \sum_{s' \in \mathcal{S}} \mathcal{P}_{ss'}^a v_{\ast}(s') \right)
 $$
 
-#### b) Cho Optimal Action-Value Function $q_*(s, a)$:
+#### b) Cho Optimal Action-Value Function $q_{\ast}(s, a)$:
 
 $$
-q_*(s, a) = \mathcal{R}_s^a + \gamma \sum_{s' \in \mathcal{S}} \mathcal{P}_{ss'}^a \max_{a' \in \mathcal{A}} q_*(s', a')
+q_{\ast}(s, a) = \mathcal{R}_s^a + \gamma \sum_{s' \in \mathcal{S}} \mathcal{P}_{ss'}^a \max_{a' \in \mathcal{A}} q_{\ast}(s', a')
 $$
+
+> **Giải thích trực quan các thành phần trong công thức:**
+> * $v_{\ast}(s)$: Giá trị trạng thái tối ưu (lợi tức kỳ vọng cao nhất có thể đạt được khi xuất phát từ trạng thái $s$).
+> * $q_{\ast}(s, a)$: Giá trị hành động tối ưu (lợi tức kỳ vọng cao nhất khi chọn hành động $a$ tại trạng thái $s$, sau đó hành động tối ưu).
+> * $\max_{a \in \mathcal{A}}$: Phản ánh việc tác tử luôn chọn hành động $a$ có lợi ích lớn nhất, thay vì lấy trung bình có trọng số theo chính sách $\pi$ như ở phương trình kỳ vọng.
 
 #### c) Đặc điểm cốt lõi:
 * Phương trình Bellman tối ưu có chứa toán tử $\max$, do đó đây là **hệ phương trình phi tuyến (non-linear)**.
@@ -262,7 +267,7 @@ Thuật toán lặp chính sách giải bài toán tìm kiếm chính sách tố
 2. **Policy Improvement (Cải tiến chính sách):** Tạo ra chính sách mới tốt hơn bằng cách hành động tham lam (*greedy*) theo hàm giá trị vừa tìm được: $\pi' = \text{greedy}(v_\pi)$.
 
 $$
-\pi_0 \xrightarrow{\text{Eval}} v_{\pi_0} \xrightarrow{\text{Improve}} \pi_1 \xrightarrow{\text{Eval}} v_{\pi_1} \dots \longrightarrow \pi^* \xrightarrow{\text{Eval}} v_*
+\pi_0 \xrightarrow{\text{Eval}} v_{\pi_0} \xrightarrow{\text{Improve}} \pi_1 \xrightarrow{\text{Eval}} v_{\pi_1} \dots \longrightarrow \pi^{\ast} \xrightarrow{\text{Eval}} v_{\ast}
 $$
 
 #### b) Chi tiết toán học từng bước:
@@ -299,7 +304,7 @@ $$
 v_\pi(s) = \max_{a \in \mathcal{A}} q_\pi(s, a)
 $$
 
-Đây chính là phương trình Bellman tối ưu, chứng minh chính sách đã hội tụ về $\pi^*$.
+Đây chính là phương trình Bellman tối ưu, chứng minh chính sách đã hội tụ về $\pi^{\ast}$.
 
 #### d) Mã giả Python:
 ```python
