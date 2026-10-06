@@ -65,11 +65,20 @@ Khác với Học có giám sát (Supervised Learning) và Học không giám s�
    * *Ý nghĩa:* Không gian bên ngoài mà tác tử tương tác, tiếp nhận hành động và phản hồi trạng thái mới cùng phần thưởng.
 3. **Lịch sử (History) và Trạng thái (State - $S$):**
    * *Lịch sử ($H_t$):* Toàn bộ chuỗi trải nghiệm quan sát, hành động, phần thưởng từ đầu đến thời điểm $t$:
-     $$H_t = O_1, R_1, A_1, \dots, A_{t-1}, O_t, R_t$$
+
+$$
+H_t = O_1, R_1, A_1, \dots, A_{t-1}, O_t, R_t
+$$
+
    * *Trạng thái ($S_t$):* Thông tin tóm tắt dùng để xác định diễn biến tiếp theo, $S_t = f(H_t)$.
    * *Tính chất Markov (Markov Property):* Một trạng thái là Markov khi:
-     $$\mathbb{P}[S_{t+1} \mid S_t] = \mathbb{P}[S_{t+1} \mid S_1, S_2, \dots, S_t]$$
-     Nghĩa là tương lai độc lập với quá khứ một khi đã biết trạng thái hiện tại.
+
+$$
+\mathbb{P}[S_{t+1} \mid S_t] = \mathbb{P}[S_{t+1} \mid S_1, S_2, \dots, S_t]
+$$
+
+   *(Nghĩa là: Tương lai độc lập với quá khứ một khi đã biết trạng thái hiện tại).*
+
 4. **Hành động (Action - $A$):**
    * *Ý nghĩa:* Quyết định mà tác tử có thể đưa ra tại mỗi bước. Tập hợp tất cả các hành động khả dĩ ký hiệu là $\mathcal{A}$.
 5. **Phần thưởng (Reward - $R_t$):**
@@ -77,10 +86,14 @@ Khác với Học có giám sát (Supervised Learning) và Học không giám s�
    * *Giả thuyết phần thưởng (Reward Hypothesis):* Mọi mục tiêu đều có thể quy về việc tối đa hóa phần thưởng tích lũy kỳ vọng.
 6. **Lợi tức tích lũy (Return - $G_t$):**
    * *Ý nghĩa:* Tổng phần thưởng chiết khấu mà tác tử nhận được từ thời điểm $t$ cho đến khi kết thúc:
-     $$G_t = R_{t+1} + \gamma R_{t+2} + \gamma^2 R_{t+3} + \dots = \sum_{k=0}^{\infty} \gamma^k R_{t+k+1}$$
-     Với $\gamma \in [0, 1]$ là **hệ số chiết khấu (discount factor)**:
-     * $\gamma \to 0$: Tác tử thiển cận (*myopic*), chỉ quan tâm phần thưởng trước mắt.
-     * $\gamma \to 1$: Tác tử nhìn xa trông rộng (*far-sighted*), ưu tiên phần thưởng bền vững dài hạn.
+
+$$
+G_t = R_{t+1} + \gamma R_{t+2} + \gamma^2 R_{t+3} + \dots = \sum_{k=0}^{\infty} \gamma^k R_{t+k+1}
+$$
+
+   Với $\gamma \in [0, 1]$ là **hệ số chiết khấu (discount factor)**:
+   * $\gamma \to 0$: Tác tử thiển cận (*myopic*), chỉ quan tâm phần thưởng trước mắt.
+   * $\gamma \to 1$: Tác tử nhìn xa trông rộng (*far-sighted*), ưu tiên phần thưởng bền vững dài hạn.
 7. **Chính sách (Policy - $\pi$):**
    * *Ý nghĩa:* Hàm hành vi quy định cách tác tử lựa chọn hành động dựa trên trạng thái hiện tại.
      * Chính sách tất định (*Deterministic policy*): $a = \pi(s)$.
@@ -88,9 +101,17 @@ Khác với Học có giám sát (Supervised Learning) và Học không giám s�
 8. **Hàm giá trị (Value Function):**
    * *Ý nghĩa:* Đo lường mức độ "tốt" của một trạng thái hoặc một cặp trạng thái - hành động về mặt lợi tức kỳ vọng lâu dài:
      * **Hàm giá trị trạng thái ($v_\pi(s)$ - State-Value Function):**
-       $$v_\pi(s) = \mathbb{E}_\pi [G_t \mid S_t = s]$$
+
+$$
+v_\pi(s) = \mathbb{E}_\pi [G_t \mid S_t = s]
+$$
+
      * **Hàm giá trị hành động ($q_\pi(s, a)$ - Action-Value Function):**
-       $$q_\pi(s, a) = \mathbb{E}_\pi [G_t \mid S_t = s, A_t = a]$$
+
+$$
+q_\pi(s, a) = \mathbb{E}_\pi [G_t \mid S_t = s, A_t = a]
+$$
+
 9. **Mô hình môi trường (Model):**
    * *Ý nghĩa:* Đại diện giả lập bên trong não bộ của tác tử về cơ chế vận hành của môi trường:
      * Ma trận chuyển trạng thái: $\mathcal{P}_{ss'}^a = \mathbb{P}[S_{t+1} = s' \mid S_t = s, A_t = a]$
@@ -113,24 +134,56 @@ Các phương trình Bellman thiết lập mối quan hệ đệ quy nền tản
 ```
 
 ### 2.1. Phương trình Bellman Kỳ vọng (Bellman Expectation Equation)
-Dùng để đánh giá giá trị của một chính sách $\pi$ đã biết:
+Dùng để đánh giá giá trị của một chính sách $\pi$ đã biết (*Policy Evaluation*):
 
 #### a) Cho State-Value Function $v_\pi(s)$:
-$$v_\pi(s) = \mathbb{E}_\pi [R_{t+1} + \gamma v_\pi(S_{t+1}) \mid S_t = s]$$
+Định nghĩa đệ quy kỳ vọng:
 
-Triển khai chi tiết qua không gian hành động và chuyển trạng thái:
-$$v_\pi(s) = \sum_{a \in \mathcal{A}} \pi(a \mid s) \left( \mathcal{R}_s^a + \gamma \sum_{s' \in \mathcal{S}} \mathcal{P}_{ss'}^a v_\pi(s') \right)$$
+$$
+v_\pi(s) = \mathbb{E}_\pi [R_{t+1} + \gamma v_\pi(S_{t+1}) \mid S_t = s]
+$$
+
+Triển khai chi tiết qua không gian hành động $\mathcal{A}$ và không gian trạng thái kế tiếp $\mathcal{S}$:
+
+$$
+v_\pi(s) = \sum_{a \in \mathcal{A}} \pi(a \mid s) \left( \mathcal{R}_s^a + \gamma \sum_{s' \in \mathcal{S}} \mathcal{P}_{ss'}^a v_\pi(s') \right)
+$$
+
+---
 
 #### b) Cho Action-Value Function $q_\pi(s, a)$:
-$$q_\pi(s, a) = \mathbb{E}_\pi [R_{t+1} + \gamma q_\pi(S_{t+1}, A_{t+1}) \mid S_t = s, A_t = a]$$
+Định nghĩa đệ quy kỳ vọng:
+
+$$
+q_\pi(s, a) = \mathbb{E}_\pi [R_{t+1} + \gamma q_\pi(S_{t+1}, A_{t+1}) \mid S_t = s, A_t = a]
+$$
 
 Triển khai chi tiết:
-$$q_\pi(s, a) = \mathcal{R}_s^a + \gamma \sum_{s' \in \mathcal{S}} \mathcal{P}_{ss'}^a \sum_{a' \in \mathcal{A}} \pi(a' \mid s') q_\pi(s', a')$$
+
+$$
+q_\pi(s, a) = \mathcal{R}_s^a + \gamma \sum_{s' \in \mathcal{S}} \mathcal{P}_{ss'}^a \sum_{a' \in \mathcal{A}} \pi(a' \mid s') q_\pi(s', a')
+$$
+
+> **Giải thích trực quan các thành phần trong công thức:**
+> * $\mathcal{R}_s^a$: Phần thưởng nhận được ngay lập tức khi ở trạng thái $s$ và làm hành động $a$.
+> * $\mathcal{P}_{ss'}^a$: Xác suất môi trường chuyển từ trạng thái $s$ sang $s'$ sau hành động $a$.
+> * $\pi(a' \mid s')$: Xác suất tác tử sẽ chọn tiếp hành động $a'$ khi đến trạng thái mới $s'$.
+> * $q_\pi(s', a')$: Giá trị hành động của bước tiếp theo $(s', a')$.
+> * $\gamma$: Hệ số chiết khấu phần thưởng tương lai.
+
+---
 
 #### c) Dạng ma trận:
-$$v_\pi = \mathcal{R}^\pi + \gamma \mathcal{P}^\pi v_\pi$$
-Vì là phương trình tuyến tính, nghiệm giải tích đóng có dạng:
-$$v_\pi = (I - \gamma \mathcal{P}^\pi)^{-1} \mathcal{R}^\pi$$
+
+$$
+v_\pi = \mathcal{R}^\pi + \gamma \mathcal{P}^\pi v_\pi
+$$
+
+Vì là hệ phương trình đại số tuyến tính, nghiệm giải tích đóng có thể tính trực tiếp:
+
+$$
+v_\pi = (I - \gamma \mathcal{P}^\pi)^{-1} \mathcal{R}^\pi
+$$
 
 ---
 
@@ -138,16 +191,27 @@ $$v_\pi = (I - \gamma \mathcal{P}^\pi)^{-1} \mathcal{R}^\pi$$
 Đặc tả hàm giá trị dưới chính sách tối ưu $\pi^*$, khi tác tử luôn chọn hành động mang lại lợi ích cao nhất:
 
 #### a) Cho Optimal State-Value Function $v_*(s)$:
-$$v_*(s) = \max_{a \in \mathcal{A}} q_*(s, a)$$
-$$v_*(s) = \max_{a \in \mathcal{A}} \left( \mathcal{R}_s^a + \gamma \sum_{s' \in \mathcal{S}} \mathcal{P}_{ss'}^a v_*(s') \right)$$
+
+$$
+v_*(s) = \max_{a \in \mathcal{A}} q_*(s, a)
+$$
+
+Triển khai chi tiết:
+
+$$
+v_*(s) = \max_{a \in \mathcal{A}} \left( \mathcal{R}_s^a + \gamma \sum_{s' \in \mathcal{S}} \mathcal{P}_{ss'}^a v_*(s') \right)
+$$
 
 #### b) Cho Optimal Action-Value Function $q_*(s, a)$:
-$$q_*(s, a) = \mathcal{R}_s^a + \gamma \sum_{s' \in \mathcal{S}} \mathcal{P}_{ss'}^a \max_{a' \in \mathcal{A}} q_*(s', a')$$
+
+$$
+q_*(s, a) = \mathcal{R}_s^a + \gamma \sum_{s' \in \mathcal{S}} \mathcal{P}_{ss'}^a \max_{a' \in \mathcal{A}} q_*(s', a')
+$$
 
 #### c) Đặc điểm cốt lõi:
 * Phương trình Bellman tối ưu có chứa toán tử $\max$, do đó đây là **hệ phương trình phi tuyến (non-linear)**.
-* Không có nghiệm dạng đại số đóng thông qua nghịch đảo ma trận.
-* Cần các thuật toán lặp như **Value Iteration**, **Policy Iteration**, **Q-Learning**, **Sarsa** để giải.
+* Không có nghiệm dạng đại số đóng thông qua nghịch đảo ma trận $(I - \gamma \mathcal{P})^{-1}$.
+* Cần các thuật toán lặp như **Value Iteration**, **Policy Iteration**, **Q-Learning**, **Sarsa** để giải tìm điểm hội tụ.
 
 ---
 
@@ -166,7 +230,7 @@ $$q_*(s, a) = \mathcal{R}_s^a + \gamma \sum_{s' \in \mathcal{S}} \mathcal{P}_{ss
 | **Hạn chế chính** | Lời nguyền số chiều (*Curse of Dimensionality*) khi không gian trạng thái lớn. | Phải chờ tập kết thúc mới học được (*offline*), tốc độ hội tụ chậm do phương sai lớn. |
 
 ### 3.2. Ý tưởng và phạm vi áp dụng của Quy hoạch động (DP)
-* **Ý tưởng:** Dựa vào hai nguyên lý tối ưu:
+* **Ý tưởng:** Dựa vào hai nguyên lý tối ưu toán học:
   1. *Cấu trúc con tối ưu (Optimal substructure):* Nghiệm tối ưu có thể phân rã thành nghiệm của các bài toán con nhỏ hơn.
   2. *Bài toán con chồng lấn (Overlapping subproblems):* Các trạng thái lặp lại nhiều lần, có thể lưu vào bộ nhớ để tái sử dụng.
   DP sử dụng các phương trình Bellman làm toán tử co (*Contraction mapping*) để lặp tính giá trị trạng thái.
@@ -176,7 +240,11 @@ $$q_*(s, a) = \mathcal{R}_s^a + \gamma \sum_{s' \in \mathcal{S}} \mathcal{P}_{ss
 
 ### 3.3. Ý tưởng và phạm vi áp dụng của Monte Carlo (MC)
 * **Ý tưởng:** Dựa trên nguyên lý thống kê thực nghiệm cơ bản:
-  $$\text{Giá trị trạng thái} = \text{Trung bình mẫu của Lợi tức tích lũy} \quad (\text{Value} = \text{Mean Return})$$
+
+$$
+\text{Giá trị trạng thái} = \text{Trung bình mẫu của Lợi tức tích lũy} \quad (\text{Value} = \text{Mean Return})
+$$
+
   Theo Luật số lớn (*Law of Large Numbers*), khi số lần ghé thăm một trạng thái $N(s) \to \infty$, giá trị trung bình mẫu hội tụ chính xác về giá trị kỳ vọng $v_\pi(s)$.
 * **Phạm vi áp dụng:**
   * Áp dụng khi môi trường không có mô hình giải tích hoặc mô hình quá phức tạp nhưng có thể mô phỏng (lấy mẫu trải nghiệm).
@@ -193,23 +261,44 @@ Thuật toán lặp chính sách giải bài toán tìm kiếm chính sách tố
 1. **Policy Evaluation (Đánh giá chính sách):** Tính toán chính xác hàm giá trị $v_\pi$ của chính sách hiện tại $\pi$ bằng cách lặp phương trình Bellman kỳ vọng.
 2. **Policy Improvement (Cải tiến chính sách):** Tạo ra chính sách mới tốt hơn bằng cách hành động tham lam (*greedy*) theo hàm giá trị vừa tìm được: $\pi' = \text{greedy}(v_\pi)$.
 
-$$\pi_0 \xrightarrow{\text{Eval}} v_{\pi_0} \xrightarrow{\text{Improve}} \pi_1 \xrightarrow{\text{Eval}} v_{\pi_1} \dots \longrightarrow \pi^* \xrightarrow{\text{Eval}} v_*$$
+$$
+\pi_0 \xrightarrow{\text{Eval}} v_{\pi_0} \xrightarrow{\text{Improve}} \pi_1 \xrightarrow{\text{Eval}} v_{\pi_1} \dots \longrightarrow \pi^* \xrightarrow{\text{Eval}} v_*
+$$
 
 #### b) Chi tiết toán học từng bước:
 * **Bước 1: Policy Evaluation**
   Cập nhật đồng bộ cho mọi trạng thái $s \in \mathcal{S}$ tại vòng lặp $k$:
-  $$v_{k+1}(s) = \sum_{a \in \mathcal{A}} \pi(a \mid s) \left( \mathcal{R}_s^a + \gamma \sum_{s' \in \mathcal{S}} \mathcal{P}_{ss'}^a v_k(s') \right)$$
+
+$$
+v_{k+1}(s) = \sum_{a \in \mathcal{A}} \pi(a \mid s) \left( \mathcal{R}_s^a + \gamma \sum_{s' \in \mathcal{S}} \mathcal{P}_{ss'}^a v_k(s') \right)
+$$
+
   Lặp cho tới khi $\max_{s \in \mathcal{S}} |v_{k+1}(s) - v_k(s)| < \theta$.
 * **Bước 2: Policy Improvement**
   Với mỗi trạng thái $s$, chọn hành động cực đại hóa giá trị hành động kỳ vọng:
-  $$\pi'(s) = \arg\max_{a \in \mathcal{A}} q_\pi(s, a) = \arg\max_{a \in \mathcal{A}} \left( \mathcal{R}_s^a + \gamma \sum_{s' \in \mathcal{S}} \mathcal{P}_{ss'}^a v_\pi(s') \right)$$
+
+$$
+\pi'(s) = \arg\max_{a \in \mathcal{A}} q_\pi(s, a) = \arg\max_{a \in \mathcal{A}} \left( \mathcal{R}_s^a + \gamma \sum_{s' \in \mathcal{S}} \mathcal{P}_{ss'}^a v_\pi(s') \right)
+$$
 
 #### c) Chứng minh tính hội tụ (Policy Improvement Theorem):
-$$q_\pi(s, \pi'(s)) = \max_{a \in \mathcal{A}} q_\pi(s, a) \ge q_\pi(s, \pi(s)) = v_\pi(s)$$
+
+$$
+q_\pi(s, \pi'(s)) = \max_{a \in \mathcal{A}} q_\pi(s, a) \ge q_\pi(s, \pi(s)) = v_\pi(s)
+$$
+
 Khai triển theo thời gian:
-$$v_\pi(s) \le q_\pi(s, \pi'(s)) = \mathbb{E}_{\pi'}[R_{t+1} + \gamma v_\pi(S_{t+1}) \mid S_t = s] \le \dots \le v_{\pi'}(s)$$
+
+$$
+v_\pi(s) \le q_\pi(s, \pi'(s)) = \mathbb{E}_{\pi'}[R_{t+1} + \gamma v_\pi(S_{t+1}) \mid S_t = s] \le \dots \le v_{\pi'}(s)
+$$
+
 Do đó chính sách mới $\pi'$ luôn tốt hơn hoặc bằng chính sách cũ $\pi$. Khi không thể cải tiến được nữa ($\pi' = \pi$), ta có:
-$$v_\pi(s) = \max_{a \in \mathcal{A}} q_\pi(s, a)$$
+
+$$
+v_\pi(s) = \max_{a \in \mathcal{A}} q_\pi(s, a)
+$$
+
 Đây chính là phương trình Bellman tối ưu, chứng minh chính sách đã hội tụ về $\pi^*$.
 
 #### d) Mã giả Python:
@@ -262,22 +351,36 @@ def policy_iteration(env, gamma=0.99, theta=1e-6):
 
 #### a) Cơ chế hoạt động
 Trong bài toán Model-free Control, tác tử không biết xác suất chuyển trạng thái $\mathcal{P}_{ss'}^a$. Do đó, tác tử phải học trực tiếp hàm **$Q(s, a)$** thay vì $V(s)$ để có thể cải tiến chính sách mà không cần mô hình:
-$$\pi'(s) = \arg\max_{a \in \mathcal{A}} Q(s, a)$$
+
+$$
+\pi'(s) = \arg\max_{a \in \mathcal{A}} Q(s, a)
+$$
 
 Để tránh việc tác tử bị mắc kẹt vào các lựa chọn địa phương do thiếu khám phá (*Exploration vs. Exploitation*), thuật toán áp dụng nguyên lý **GLIE (Greedy in the Limit with Infinite Exploration)** kết hợp chiến lược **$\epsilon$-greedy**.
 
 #### b) Nguyên lý GLIE & Chiến lược $\epsilon$-greedy:
 * **Chiến lược $\epsilon$-greedy:**
-  $$\pi(a \mid s) = \begin{cases} 1 - \epsilon + \frac{\epsilon}{m}, & \text{nếu } a = \arg\max_{a'} Q(s, a') \\ \frac{\epsilon}{m}, & \text{nếu } a \ne \arg\max_{a'} Q(s, a') \end{cases}$$
+
+$$
+\pi(a \mid s) = \begin{cases} 1 - \epsilon + \dfrac{\epsilon}{m}, & \text{nếu } a = \arg\max_{a'} Q(s, a') \\[8pt] \dfrac{\epsilon}{m}, & \text{nếu } a \ne \arg\max_{a'} Q(s, a') \end{cases}
+$$
+
 * **Điều kiện GLIE:**
   1. Mọi cặp $(s, a)$ đều được khám phá vô hạn lần: $\lim_{k \to \infty} N_k(s, a) = \infty$.
   2. Chính sách dần hội tụ về tham lam tuyệt đối: $\lim_{k \to \infty} \pi_k(a \mid s) = \mathbf{1}(a = \arg\max_{a'} Q_k(s, a'))$.
-  * Để đạt GLIE, ta giảm dần tỷ lệ khám phá theo số tập: $\epsilon_k = \frac{1}{k}$.
+  * Để đạt GLIE, ta giảm dần tỷ lệ khám phá theo số tập: $\epsilon_k = \dfrac{1}{k}$.
 
 #### c) Công thức cập nhật tăng dần (Incremental Mean Update):
 Sau mỗi tập trải nghiệm $S_1, A_1, R_2, \dots, S_T$, ta duyệt và cập nhật hàm $Q$ theo công thức trung bình động:
-$$N(S_t, A_t) \leftarrow N(S_t, A_t) + 1$$
-$$Q(S_t, A_t) \leftarrow Q(S_t, A_t) + \frac{1}{N(S_t, A_t)} \Big( G_t - Q(S_t, A_t) \Big)$$
+
+$$
+N(S_t, A_t) \leftarrow N(S_t, A_t) + 1
+$$
+
+$$
+Q(S_t, A_t) \leftarrow Q(S_t, A_t) + \frac{1}{N(S_t, A_t)} \Big( G_t - Q(S_t, A_t) \Big)
+$$
+
 Trong đó sai số $(G_t - Q(S_t, A_t))$ đóng vai trò điều chỉnh giá trị ước lượng dần tiến về giá trị kỳ vọng thực tế.
 
 #### d) Mã giả Python:
